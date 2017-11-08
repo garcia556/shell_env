@@ -1,0 +1,16 @@
+[user]
+	name = Dmitry Glavchev
+	email = dmitry.glavchev@gmail.com
+[core]
+	editor = vim
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status -s
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	l = log --oneline --abbrev=4 --graph --all
+	visual = !gitk
+[credential]
+	helper = cache

@@ -88,11 +88,11 @@ function python_module_check()
 
 	echo "Checking python module \"${module}\" ..."
 
-	python -c "import ${module}"
+	python3 -c "import ${module}"
 	res=$?
 
 	if [ ${res} != 0 ]; then
-		pip install ${module}
+		pip3 install ${module}
 	fi
 }
 

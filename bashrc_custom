@@ -1,42 +1,44 @@
 #!/bin/bash
 
-alias ls="ls -hF"
-
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	alias ls="ls --color"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-	alias ls="ls -G"
-	alias start="open -n -a"
-	alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
-	export CLICOLOR=1
-	export LSCOLORS=GxFxCxDxBxegedabagaced
-fi
-
-alias copy="cp"
-alias ll="ls -l"
-alias l="ll -a"
-alias vi="vim"
-alias lld="ll -d */"
-alias lessn="less -N"
-alias lessf="less +F"
-alias svnst="svn status"
-alias svnadd="svn status | grep --color=never \"?\" | cut -d \"?\" -f 2 | sed \"s/^ *//;s/ *$//\" | sed \"s/^/\\\"/;s/$/\\\"/\" | xargs -L1 svn add"
-alias svndel="svn status | grep --color=never \"!\" | cut -d \"!\" -f 2 | sed \"s/^ *//;s/ *$//\" | sed \"s/^/\\\"/;s/$/\\\"/\" | xargs -L1 svn del"
-
-# VLC in console mode
-alias cvlc="vlc --intf ncurses --no-color"
-
-export SVN_EDITOR=/usr/bin/vim
-alias grep="grep --color=always"
-
 ######################################################################
 
-function brew_pkg_tree_img()
+function edit_hosts() { sudo vi /etc/hosts; }
+
+###################################
+
+function install_prerequisites()
 {
-	brew install graphviz
+	echo "Checking prerequisites ..."
+
+	if [ ! -x "$(which brew)" ]; then
+		/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	fi
+
+	brew install thefuck
+	brew install graphviz # for deps tree
+	brew install gnu-sed # gsed
+	brew install subversion
+	brew install git
+	brew install python3
+	brew install cask
+
+	brew cask install docker
+	brew      install docker-compose
+	brew cask install virtualbox
+	brew cask install vagrant	
+
+	echo "Done"
+}
+
+###################################
+
+function brew_deps_tree()
+{
 	brew graph --installed | dot -T png -o graph.png
 	open graph.png
 }
+
+###################################
 
 #https://gist.github.com/mathiasbynens/674099
 function appify()
@@ -58,54 +60,30 @@ function appify()
 
 ###################################
 
-function edit_hosts() { sudo vi /private/etc/hosts; }
-
-###################################
-
-function _brew_cmd_pkg()
-{
-	cmd=$1
-	bin=$2
-	pkg=$3
-
-	echo "Checking ${bin} (${pkg}) is installed using \"${cmd}\" ..."
-
-	if [ ! -x "$(which ${bin})" ]; then
-		${cmd} "${pkg}"
-	fi
-}
-
-###################################
-
-function brew_check_install()		{ _brew_cmd_pkg "brew install "      $1 $2; }
-function brew_check_install_cask()	{ _brew_cmd_pkg "brew cask install " $1 $2; }
-
-###################################
-
 function python_module_check()
 {
+	local PYTHON="python3"
+	local PIP="pip3"
+
 	module=$1
+	if [ -z ${module} ]; then
+		echo "Module not set"
+		return 1
+	fi
 
 	echo "Checking python module \"${module}\" ..."
 
-	python3 -c "import ${module}"
+	${PYTHON} -c "import ${module}"
 	res=$?
 
-	if [ ${res} != 0 ]; then
-		pip3 install ${module}
+	if [ ${res} == 0 ]; then
+		echo "Module found"
+	else
+		read -p "Module not found! Install? Y/[n] " yn
+		if [ "${yn}" == "Y" ]; then
+			${PIP} install ${module}
+		fi
 	fi
-}
-
-###################################
-
-function get_sed()
-{
-	local SED=sed
-	if [ "$(uname)" == "Darwin" ]; then
-		local SED="g${SED}"
-	fi
-
-	echo ${SED}
 }
 
 ###################################
@@ -116,41 +94,59 @@ function on_remote()
 	return 1
 
 #	SSH_AUTH_SOCK=$(ls /tmp/*launchd*/Listeners)
-	EXEC_SA="ssh-agent -sssss"
+#	EXEC_SA="ssh-agent -sssss"
 
-	echo "Currenty active ssh-agents:"
-	ps auxww | grep ${EXEC_SA} | grep -v grep | sort
+#	echo "Currenty active ssh-agents:"
+#	ps auxww | grep ${EXEC_SA} | grep -v grep | sort
 
-	echo "Killing older ones ..."
-	ps -x -o pid,command | grep --color=never ${EXEC_SA} | grep -v grep | cut -d' ' -f 1 | xargs kill -KILL
+#	echo "Killing older ones ..."
+#	ps -x -o pid,command | grep --color=never ${EXEC_SA} | grep -v grep | cut -d' ' -f 1 | xargs kill -KILL
 
-	eval `${EXEC_SA}`
-	ssh-add -K
+#	eval `${EXEC_SA}`
+#	ssh-add -K
 
-	echo "Done, new one started, agents running:"
-	ps auxww | grep ${EXEC_SA} | grep -v grep | sort
+#	echo "Done, new one started, agents running:"
+#	ps auxww | grep ${EXEC_SA} | grep -v grep | sort
 }
 
 ######################################################################
 
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	test -s ~/.alias && . ~/.alias || true
+if [ -x "$(which thefuck)" ]; then
+	eval $(thefuck --alias)
+fi
 
-	case $TERM in
-		xterm*|rxvt*)
-			TITLEBAR='\[\033]0;\u@\h:\w\007\]'
-			;;
-		*)
-			TITLEBAR=""
-			;;
-	esac;
-#else
 #	#remote connection
 #	if [ ! -z "${SSH_CLIENT}" ]; then
 #		echo "Welcome, stranger"
 #		on_remote
 #	fi
-fi
+
+#alias ls="ls -hF"
+
+#if [[ "$OSTYPE" == "linux-gnu" ]]; then
+#	alias ls="ls --color"
+#elif [[ "$OSTYPE" == "darwin"* ]]; then
+#	alias ls="ls -G"
+
+alias start="open -n -a"
+alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
+alias cvlc="vlc --intf ncurses --no-color" # VLC in console mode
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+
+alias ll="ls -l"
+alias l="ll -a"
+alias lld="ll -d */"
+
+alias lessn="less -N"
+alias lessf="less +F"
+
+alias grep="grep --color=always"
+
+export SVN_EDITOR=$(which vi)
+alias svnst="svn status"
+alias svnadd="svn status | grep --color=never \"?\" | cut -d \"?\" -f 2 | sed \"s/^ *//;s/ *$//\" | sed \"s/^/\\\"/;s/$/\\\"/\" | xargs -L1 svn add"
+alias svndel="svn status | grep --color=never \"!\" | cut -d \"!\" -f 2 | sed \"s/^ *//;s/ *$//\" | sed \"s/^/\\\"/;s/$/\\\"/\" | xargs -L1 svn del"
 
 ######################################################################
 

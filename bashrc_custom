@@ -14,18 +14,24 @@ function install_prerequisites()
 		/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	fi
 
+	brew install bash-completion
 	brew install thefuck
+	brew install p7zip
 	brew install graphviz # for deps tree
 	brew install gnu-sed # gsed
 	brew install subversion
 	brew install git
 	brew install python3
+	brew install mingw-w64
 	brew install cask
 
 	brew cask install docker
 	brew      install docker-compose
 	brew cask install virtualbox
 	brew cask install vagrant	
+
+	# completion for docker
+	ln -s /Applications/Docker.app/Contents/Resources/etc/docker.bash-completion /usr/local/etc/bash_completion.d/docker
 
 	echo "Done"
 }
@@ -113,6 +119,10 @@ function on_remote()
 
 if [ -x "$(which thefuck)" ]; then
 	eval $(thefuck --alias)
+fi
+
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+	. $(brew --prefix)/etc/bash_completion
 fi
 
 #	#remote connection

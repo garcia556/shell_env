@@ -114,6 +114,14 @@ function set_prompt()
 	local COLOR_GRAY='\e[0;30m'
 	local COLOR_LIGHT_GRAY='\e[0;37m'
 
+	# wrap colors in \[\]
+	for var in $(set | grep --color=never "local COLOR_" | grep -v grep | awk '{$1=$1;print}' | cut -d ' ' -f 2); do
+		name=$(echo $var | cut -d '=' -f 1)
+		value=$(echo $var | cut -d '=' -f 2 | cut -d "'" -f 2)
+		value="\\[$value\\]"
+		declare ${name}="${value}"
+	done
+
 	local KEY_TIME='\t'
 	local KEY_USER='\u'
 	local KEY_HOST='\h'
@@ -122,7 +130,7 @@ function set_prompt()
 
 #	case $TERM in
 #	xterm*)
-#		TITLEBAR='\e]0;$KEY_USER@$KEY_HOST:\w\a'
+#		TITLEBAR="\e]0;$KEY_USER@$KEY_HOST:$KEY_DIR\a"
 #		;;
 #	*)
 #		TITLEBAR=""

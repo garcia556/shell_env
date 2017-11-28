@@ -14,6 +14,7 @@ function install_prerequisites()
 		/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	fi
 
+	brew install netcat
 	brew install midnight-commander
 	brew install bash-completion
 	brew install thefuck

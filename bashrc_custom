@@ -179,12 +179,14 @@ function on_remote()
 
 ######################################################################
 
-if [ -x "$(which thefuck)" ]; then
-	eval $(thefuck --alias)
-fi
+if [ "$(uname)" == "Darwin" ]; then
+	if [ -x "$(which thefuck)" ]; then
+		eval $(thefuck --alias)
+	fi
 
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-	. $(brew --prefix)/etc/bash_completion
+	if [ -f $(brew --prefix)/etc/bash_completion ]; then
+		. $(brew --prefix)/etc/bash_completion
+	fi
 fi
 
 #	#remote connection

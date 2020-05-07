@@ -3,7 +3,7 @@
 	email = dmitry.glavchev@gmail.com
 [core]
 	editor = vim
-	excludesfile = ~/.gitignore
+	excludesfile = ~/gitignore
 [alias]
 	co = checkout
 	br = branch

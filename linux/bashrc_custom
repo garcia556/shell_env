@@ -86,13 +86,14 @@ function set_alias()
 
 ###################################
 
-export HISTSIZE=5000
-export HISTFILESIZE=10000
+HISTSIZE=5000
+HISTFILESIZE=10000
+HISTCONTROL=ignoredups:erasedups
+PROMPT_COMMAND="history -a; history -c; history -r"
 shopt -s histappend
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagaced
+CLICOLOR=1
+LSCOLORS=GxFxCxDxBxegedabagaced
 
 set_alias
 set_prompt

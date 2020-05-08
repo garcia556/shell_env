@@ -4,6 +4,8 @@
 
 function set_prompt()
 {
+	[ -f /etc/env_type_prod ] && local IS_PROD=1
+
 	local COLOR_NC='\e[0m' # No Color
 	local COLOR_WHITE='\e[1;37m'
 	local COLOR_BLACK='\e[0;30m'
@@ -21,6 +23,8 @@ function set_prompt()
 	local COLOR_YELLOW='\e[1;33m'
 	local COLOR_GRAY='\e[0;30m'
 	local COLOR_LIGHT_GRAY='\e[0;37m'
+
+	local COLOR_FG_WHITE_BG_RED='\e[1;37;41m'
 
 	# wrap colors in \[\]
 	for var in $(set | grep --color=never "local COLOR_" | grep -v grep | awk '{$1=$1;print}' | cut -d ' ' -f 2); do
@@ -45,6 +49,9 @@ function set_prompt()
 #		;;
 #	esac
 
+	local HOST_COLOR=$COLOR_LIGHT_GREEN
+	[ "$IS_PROD" == "1" ] && local HOST_COLOR=$COLOR_FG_WHITE_BG_RED
+
 	PS1="$TITLEBAR\
 $COLOR_WHITE[$KEY_TIME]$COLOR_NC \
 $COLOR_WHITE($COLOR_NC\
@@ -52,7 +59,7 @@ $COLOR_CYAN\$?$COLOR_NC\
 $COLOR_WHITE)$COLOR_NC \
 $COLOR_YELLOW$KEY_USER$COLOR_NC\
 $COLOR_RED@$COLOR_NC\
-$COLOR_LIGHT_GREEN$KEY_HOST$COLOR_NC \
+$HOST_COLOR$KEY_HOST$COLOR_NC \
 $COLOR_GREEN$KEY_DIR_SHORT$COLOR_NC\
 \$ "
 
@@ -60,22 +67,33 @@ $COLOR_GREEN$KEY_DIR_SHORT$COLOR_NC\
 	PS4='+ '
 }
 
+function set_alias()
+{
+	alias ls="ls -hF"
+	alias ls="ls --color"
+
+	alias ll="ls -l"
+	alias l="ll -a"
+	alias lld="ll -d */"
+
+	alias lessn="less -N"
+	alias lessf="less +F"
+
+	alias dmesg="dmesg --color"
+
+	alias grep="grep --color=always"
+}
+
 ###################################
 
-alias ls="ls -hF"
-alias ls="ls --color"
+export HISTSIZE=5000
+export HISTFILESIZE=10000
+shopt -s histappend
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
-alias ll="ls -l"
-alias l="ll -a"
-alias lld="ll -d */"
-
-alias lessn="less -N"
-alias lessf="less +F"
-
-alias grep="grep --color=always"
-
+set_alias
 set_prompt
 

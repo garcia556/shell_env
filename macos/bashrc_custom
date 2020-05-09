@@ -62,7 +62,7 @@ $COLOR_RED@$COLOR_NC\
 $HOST_COLOR$KEY_HOST$COLOR_NC \
 $COLOR_GREEN$KEY_DIR_SHORT$COLOR_NC\
 $COLOR_LIGHT_CYAN\$(__git_ps1)$COLOR_NC \
-\$ "
+\\\$ "
 
 	PS2='> '
 	PS4='+ '
@@ -88,6 +88,7 @@ function set_alias()
 	alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
 	alias cvlc="vlc --intf ncurses --no-color" # VLC in console mode
 	alias sleep_display="pmset displaysleepnow"
+	alias sublime="open -a /Applications/Sublime\ Text.app"
 }
 
 ###################################

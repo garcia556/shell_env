@@ -1,0 +1,3 @@
+export PATH=${HOME}/.local/bin/:$PATH
+PIPENV_VENV_IN_PROJECT=1
+

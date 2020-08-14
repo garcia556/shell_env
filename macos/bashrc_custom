@@ -231,6 +231,8 @@ fi
 source <(hcloud completion bash)
 source <(yc completion bash)
 
+source ~/.git-prompt.sh
+
 set_alias
 set_prompt
 

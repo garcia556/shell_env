@@ -96,6 +96,8 @@ shopt -s histappend
 CLICOLOR=1
 LSCOLORS=GxFxCxDxBxegedabagaced
 
+source ~/.git-prompt.sh
+
 set_alias
 set_prompt
 

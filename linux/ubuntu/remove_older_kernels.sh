@@ -1,19 +1,11 @@
 #!/bin/bash
 
-apt remove \
-	linux-headers-5.8.0-55-generic \
-	linux-hwe-5.8-headers-5.8.0-55 \
-	linux-image-5.8.0-55-generic \
-	linux-modules-5.8.0-55-generic \
-	linux-modules-extra-5.8.0-55-generic \
-	linux-headers-5.8.0-59-generic \
-	linux-hwe-5.8-headers-5.8.0-59 \
-	linux-image-5.8.0-59-generic \
-	linux-modules-5.8.0-59-generic \
-	linux-modules-extra-5.8.0-59-generic \
-	linux-headers-5.4.0-77-generic \
-	linux-image-5.4.0-77-generic \
-	linux-modules-5.4.0-77-generic \
-	linux-modules-extra-5.4.0-77-generic \
-	linux-headers-5.4.0-77
+KERNEL_VERSION=$1
+
+if [ -z "${KERNEL_VERSION}" ]; then
+	echo "Kernel version not defined"
+	exit 1
+fi
+
+apt list --installed 2>&1 | grep "${KERNEL_VERSION=}" | sed "s/\/.*//g" | paste -s -d " "
 

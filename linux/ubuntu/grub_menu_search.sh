@@ -1,4 +1,4 @@
 #!/bin/bash
 
-grep -A100 submenu  /boot/grub/grub.cfg |grep menuentry
+grep -A1000 submenu  /boot/grub/grub.cfg |grep menuentry
 

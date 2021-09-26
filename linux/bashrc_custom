@@ -101,3 +101,7 @@ source ~/.git-prompt.sh
 set_alias
 set_prompt
 
+if [ -d "$HOME/adb-fastboot/platform-tools" ] ; then
+ export PATH="$HOME/adb-fastboot/platform-tools:$PATH"
+fi
+

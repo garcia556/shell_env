@@ -7,5 +7,5 @@ function path_add()
 
 path_add "${HOME}/.local/bin"
 
-export PIPENV_VENV_IN_PROJECT=1
+export PIPENV_VENV_IN_PROJECT=true
 
